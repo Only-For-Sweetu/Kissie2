@@ -90,10 +90,8 @@
         #part1 .heart img:nth-child(5) { width: 25px; height: 25px; right: 110px; bottom: 80px; transform: rotate(5deg); }
         #part1 .content { position: relative; width: 100%; height: 100%; }
         #part1 .content .title { display: flex; justify-content: center; align-items: center; width: 100%; height: 50px; overflow: hidden; }
-        #part1 .content .title h2 { font-family: 'Dancing Script', cursive; font-size: 35px; color: rgb(181, 12, 17); opacity: 0; transform: translateY(-40px); transition: 2s; }
-        #part1:hover .title h2 { opacity: 1; transform: translateY(0px); }
-        #part1 .content p { padding: 0px 45px; font-size: 20px; font-family: 'Dancing Script', cursive; opacity: 0; transition: all 1s; }
-        #part1:hover .content p { animation: text1 2s forwards ease-in-out; }
+        #part1 .content .title h2 { font-family: 'Dancing Script', cursive; font-size: 35px; color: rgb(181, 12, 17); opacity: 1; transform: translateY(0px); transition: 2s; }
+        #part1 .content p { padding: 0px 45px; font-size: 20px; font-family: 'Dancing Script', cursive; opacity: 1; transition: all 1s; }
         @keyframes text1 { 0% { opacity: 0; } 100% { opacity: 1; } }
         @media screen and (max-width: 658px) {
             #part1 .box { width: 100%; max-width: 320px; height: auto; padding: 24px; }
@@ -105,11 +103,34 @@
         }
 
         /* --- Part 2: Draggable Notes Styles --- */
-        #part2 { min-height: 100vh; display: flex; align-items: center; justify-content: center; background-image: url("https://www.psdgraphics.com/wp-content/uploads/2022/01/white-math-paper-texture.jpg"); background-position: center center; position: relative; overflow: hidden; }
-        #part2 .paper { background-image: url("https://i0.wp.com/textures.world/wp-content/uploads/2018/10/2-Millimeter-Paper-Background-copy.jpg?ssl=1"); background-size: 500px; padding: 20px 40px; box-shadow: 1px 15px 20px 0px rgba(0, 0, 0, 0.5); position: absolute; max-width: 250px; cursor: grab;}
-        #part2 .paper.heart { width: 200px; height: 200px; padding: 0; border-radius: 50%; }
+        #part2 { 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background-image: url("https://www.psdgraphics.com/wp-content/uploads/2022/01/white-math-paper-texture.jpg"); 
+            background-position: center center; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        #part2 .paper { 
+            background-image: url("https://i0.wp.com/textures.world/wp-content/uploads/2018/10/2-Millimeter-Paper-Background-copy.jpg?ssl=1"); 
+            background-size: 500px; 
+            padding: 20px 40px; 
+            box-shadow: 1px 15px 20px 0px rgba(0, 0, 0, 0.5); 
+            position: absolute; 
+            width: 250px; 
+            cursor: grab;
+            /* Initial position will be set by JavaScript */
+        }
+        #part2 .paper.heart { 
+            width: 200px; 
+            height: 200px; 
+            padding: 0; 
+            border-radius: 50%;
+        }
         #part2 .paper.image { padding: 10px; }
-        #part2 .paper-text { font-family: 'Zeyada'; font-size: 35px; color: rgb(0, 0, 100); opacity: 0.75; user-select: none; }
+        #part2 .paper-text { font-family: 'Zeyada'; font-size: 35px; color: rgb(0, 0, 100); opacity: 0.75; user-select: none; text-align: center; }
         #part2 .paper.image .paper-text { font-size: 24px; }
         #part2 img { max-height: 150px; width: 100%; user-select: none; }
         #part2 .paper.heart::after { content: ""; background-image: url('https://cdn.pixabay.com/photo/2016/03/31/19/25/cartoon-1294994__340.png'); width: 100%; height: 100%; position: absolute; top: 0; left: 0; background-size: 150px; background-position: center center; background-repeat: no-repeat; opacity: 0.6; }
@@ -186,8 +207,13 @@
         }
 
         @media (max-width: 540px) {
+            .part3-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
             .music-player-image {
-                display: none;
+                width: 60%;
+                max-width: 200px;
             }
             .music-player {
                 width: 100%;
@@ -256,9 +282,9 @@
     <!-- --- Section 2: Draggable Notes --- -->
     <section id="part2">
         <div class="paper heart"></div>
-        <div class="paper image"><p class="paper-text"> and I fallen in</p><p class="paper-text">Love with You 😍 </p><img src="../1200x900wf.jpg" alt="cute illustration"/></div>
-        <div class="paper image"><p class="paper-text">How can you be</p><p class="paper-text"> so cute ❤️</p><img src="./1200x900wf.jpg" alt="cute illustration"/></div>
-        <div class="paper image"><p class="paper-text">You are...</p><img src="1200x900wf.jpg" alt="cute illustration"/></div>
+        <div class="paper image"><p class="paper-text"> and I fallen in</p><p class="paper-text">Love with You 😍 </p><img src="https://iili.io/HSzXpzg.jpg" alt="cute illustration"/></div>
+        <div class="paper image"><p class="paper-text">How can you be</p><p class="paper-text"> so cute ❤️</p><img src="https://iili.io/HSzXyXa.jpg" alt="cute illustration"/></div>
+        <div class="paper image"><p class="paper-text">You are...</p><img src="https://iili.io/HSzXbmF.jpg" alt="cute illustration"/></div>
         <div class="paper red"><p class="paper-text"> and My Favorite</p><p class="paper-text">Person 😍</p></div>
         <div class="paper"><p class="paper-text">You are Cute &</p><p class="paper-text">Amazing <span style="color: red !important;">❤️</span></p></div>
         <div class="paper"><p class="paper-text">Drag the papers to move!</p></div>
@@ -308,15 +334,37 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Draggable Paper Script (Corrected) ---
+            // --- Draggable Paper Script (Fully Responsive) ---
             const papers = document.querySelectorAll('#part2 .paper');
             const part2 = document.querySelector('#part2');
             let highestZ = 1;
 
-            papers.forEach((paper, index) => {
-                // Apply a random rotation to each paper to create a messy pile effect in the center
-                paper.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
-                
+            // This function positions the papers in a stack at the center.
+            const stackPapers = () => {
+                const containerWidth = part2.clientWidth;
+                const containerHeight = part2.clientHeight;
+
+                papers.forEach(paper => {
+                    const paperWidth = paper.offsetWidth;
+                    const paperHeight = paper.offsetHeight;
+
+                    // Center the paper
+                    const centerX = (containerWidth - paperWidth) / 2;
+                    const centerY = (containerHeight - paperHeight) / 2;
+
+                    paper.style.left = `${centerX}px`;
+                    paper.style.top = `${centerY}px`;
+                    paper.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+                });
+            };
+            
+            // Run the positioning function once the page is loaded
+            stackPapers();
+            // Reposition on window resize to handle orientation changes on mobile
+            window.addEventListener('resize', stackPapers);
+
+
+            papers.forEach((paper) => {
                 let isDragging = false;
                 let offsetX, offsetY;
 
@@ -325,16 +373,11 @@
                     paper.style.zIndex = highestZ++;
                     paper.style.cursor = 'grabbing';
                     
-                    // When dragging starts, get the initial position relative to the parent
-                    const parentRect = part2.getBoundingClientRect();
-                    const rect = paper.getBoundingClientRect();
+                    const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
                     
-                    // This ensures the paper doesn't jump on the first drag
-                    paper.style.left = `${rect.left - parentRect.left}px`;
-                    paper.style.top = `${rect.top - parentRect.top}px`;
-
-                    const clientX = e.clientX || e.touches[0].clientX;
-                    const clientY = e.clientY || e.touches[0].clientY;
+                    const rect = paper.getBoundingClientRect();
+                    const parentRect = part2.getBoundingClientRect();
                     
                     offsetX = clientX - (rect.left - parentRect.left);
                     offsetY = clientY - (rect.top - parentRect.top);
@@ -349,8 +392,8 @@
                     if (!isDragging) return;
                     e.preventDefault();
 
-                    const clientX = e.clientX || e.touches[0].clientX;
-                    const clientY = e.clientY || e.touches[0].clientY;
+                    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
                     
                     const parentRect = part2.getBoundingClientRect();
                     let newX = clientX - parentRect.left - offsetX;
@@ -447,8 +490,4 @@
 </body>
 
 </html>
-
-
-
-
 
