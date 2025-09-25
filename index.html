@@ -74,7 +74,7 @@
 
         #part1 .gifs_left { position: absolute; width: 92px; bottom: -25px; left: -16px; }
         #part1 .gifs_right { position: absolute; width: 92px; top: -54px; right: -33px; }
-        #part1 .gifs_left img, #part1 .gifs_right img { width: 100%; }
+        #part1 .gifs_left img, #part1 .gifs_right img { width: 130%; }
         #part1 .mail { width: 550px; height: 300px; border: 2px dashed rgb(167, 32, 71); border-radius: 15px; position: relative; }
         #part1 .heart { position: absolute; width: 100%; height: 100%; }
         #part1 .heart img {
@@ -475,9 +475,9 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Draggable Paper Script (Fully Responsive) ---
-            const papers = document.querySelectorAll('#part2 .paper');
+            // --- Draggable Paper Script (Fully Responsive & Efficient) ---
             const part2 = document.querySelector('#part2');
+            const papers = document.querySelectorAll('#part2 .paper');
             let highestZ = 1;
 
             // This function positions the papers in a stack at the center.
@@ -498,66 +498,81 @@
                     paper.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
                 });
             };
-            
-            // Run the positioning function once the page is loaded
+
+            // Run the positioning function once the page is loaded and on resize
             stackPapers();
-            // Reposition on window resize to handle orientation changes on mobile
             window.addEventListener('resize', stackPapers);
 
+            // --- Efficient Drag Logic using Event Delegation ---
+            let activePaper = null;
+            let isDragging = false;
+            let offsetX, offsetY;
 
-            papers.forEach((paper) => {
-                let isDragging = false;
-                let offsetX, offsetY;
+            const startDrag = (e) => {
+                const targetPaper = e.target.closest('.paper');
+                if (!targetPaper) return;
 
-                const startDrag = (e) => {
-                    isDragging = true;
-                    paper.style.zIndex = highestZ++;
-                    paper.style.cursor = 'grabbing';
-                    
-                    const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-                    
-                    const rect = paper.getBoundingClientRect();
-                    const parentRect = part2.getBoundingClientRect();
-                    
-                    offsetX = clientX - (rect.left - parentRect.left);
-                    offsetY = clientY - (rect.top - parentRect.top);
-                    
-                    document.addEventListener('mousemove', drag);
-                    document.addEventListener('touchmove', drag, { passive: false });
-                    document.addEventListener('mouseup', endDrag);
-                    document.addEventListener('touchend', endDrag);
-                };
+                activePaper = targetPaper;
+                isDragging = true;
 
-                const drag = (e) => {
-                    if (!isDragging) return;
-                    e.preventDefault();
+                // Prevent page scroll while dragging
+                document.body.style.overflow = 'hidden';
 
-                    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-                    
-                    const parentRect = part2.getBoundingClientRect();
-                    let newX = clientX - parentRect.left - offsetX;
-                    let newY = clientY - parentRect.top - offsetY;
+                activePaper.style.zIndex = highestZ++;
+                activePaper.style.cursor = 'grabbing';
 
-                    paper.style.left = `${newX}px`;
-                    paper.style.top = `${newY}px`;
-                };
+                const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
 
-                const endDrag = () => {
-                    if (!isDragging) return;
-                    isDragging = false;
-                    paper.style.cursor = 'grab';
+                const rect = activePaper.getBoundingClientRect();
+                const parentRect = part2.getBoundingClientRect();
 
-                    document.removeEventListener('mousemove', drag);
-                    document.removeEventListener('touchmove', drag);
-                    document.removeEventListener('mouseup', endDrag);
-                    document.removeEventListener('touchend', endDrag);
-                };
+                offsetX = clientX - (rect.left - parentRect.left);
+                offsetY = clientY - (rect.top - parentRect.top);
+                
+                // Add move and end listeners to the whole document for smooth dragging
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('touchmove', drag, { passive: false });
+                document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchend', endDrag);
+            };
 
-                paper.addEventListener('mousedown', startDrag);
-                paper.addEventListener('touchstart', startDrag, { passive: true });
-            });
+            const drag = (e) => {
+                if (!isDragging || !activePaper) return;
+                // Prevent default touch behavior like scrolling
+                e.preventDefault();
+
+                const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+                const parentRect = part2.getBoundingClientRect();
+                let newX = clientX - parentRect.left - offsetX;
+                let newY = clientY - parentRect.top - offsetY;
+
+                activePaper.style.left = `${newX}px`;
+                activePaper.style.top = `${newY}px`;
+            };
+
+            const endDrag = () => {
+                if (!isDragging || !activePaper) return;
+
+                // Re-enable page scroll
+                document.body.style.overflow = '';
+
+                isDragging = false;
+                activePaper.style.cursor = 'grab';
+                activePaper = null;
+
+                // Clean up global event listeners
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('touchmove', drag);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+            };
+            
+            // Attach a single set of listeners to the parent container
+            part2.addEventListener('mousedown', startDrag);
+            part2.addEventListener('touchstart', startDrag, { passive: false });
 
 
             // --- Music Player Script ---
