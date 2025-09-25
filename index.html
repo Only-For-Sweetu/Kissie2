@@ -275,12 +275,23 @@
         .music-player-image {
             width: 300px;
             flex-shrink: 0;
+            text-align: center; /* Center the caption text */
         }
 
         .music-player-image img {
             width: 100%;
             border-radius: 25px;
             box-shadow: 0 15px 30px var(--shadow);
+            cursor: pointer; /* Make it clickable */
+        }
+        
+        .sticker-caption {
+            font-family: 'Dancing Script', cursive;
+            color: var(--text-dark);
+            margin-top: 10px;
+            font-size: 1.2rem;
+            opacity: 0.8;
+            user-select: none; /* Prevent text selection */
         }
 
         .music-player {
@@ -352,22 +363,16 @@
             overflow: hidden; /* Hide the off-screen content */
         }
         
-        /* This is the moving part */
         .loader-content {
             display: flex;
             align-items: center;
             position: absolute;
-            /* Animation that loops from right to left - now faster */
             animation: run-across 2.5s linear infinite; 
         }
 
         @keyframes run-across {
-            0% {
-                transform: translate3d(60vw, 0, 0); /* Start from off-screen right */
-            }
-            100% {
-                transform: translate3d(-60vw, 0, 0); /* End at off-screen left */
-            }
+            0% { transform: translate3d(60vw, 0, 0); }
+            100% { transform: translate3d(-60vw, 0, 0); }
         }
 
         .loader-gif {
@@ -382,6 +387,48 @@
             font-family: 'Dancing Script', cursive;
             white-space: nowrap;
         }
+
+        /* --- Heart Burst & Heat Effect Styles --- */
+        .heat-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 105, 180, 0.25) 0%, rgba(255, 182, 193, 0) 70%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10000;
+            animation: heat-pulse 2.5s ease-out forwards;
+        }
+
+        @keyframes heat-pulse {
+            0% { opacity: 1; transform: scale(0.5); }
+            100% { opacity: 0; transform: scale(1.5); }
+        }
+
+        .heart-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10001;
+            animation: heart-burst var(--duration) ease-out forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes heart-burst {
+            0% {
+                transform: translate(0, 0) rotate(var(--r-start)) scale(1);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x-end), var(--y-end)) rotate(var(--r-end)) scale(0);
+                opacity: 0;
+            }
+        }
+
 
         /* --- Footer Styles --- */
         #copy { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 1rem; z-index: 100; }
@@ -462,7 +509,8 @@
     <section id="part4">
         <div class="part4-container">
             <div class="music-player-image">
-                <img src="https://media2.giphy.com/media/v1.Y2lkPTZjMDliOTUycXRjMnl2cDJvMWdmZ293Z2xyaXl1dnFqeDNyNWdobTJrdnVhYml4aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/n2VnfwWUszgwjNyyRa/giphy.gif" alt="Cute animated illustration">
+                <img id="musicPlayerSticker" src="https://media2.giphy.com/media/v1.Y2lkPTZjMDliOTUycXRjMnl2cDJvMWdmZ293Z2xyaXl1dnFqeDNyNWdobTJrdnVhYml4aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/n2VnfwWUszgwjNyyRa/giphy.gif" alt="Cute animated illustration">
+                <p class="sticker-caption">Tap to create love</p>
             </div>
             <div class="music-player">
                 <div class="album-art">
@@ -501,6 +549,59 @@
             setTimeout(() => {
                 $('.loader-wrapper').fadeOut('slow');
             }, 7000);
+
+            // --- Heart Burst Effect on Sticker Click ---
+            const musicPlayerSticker = document.getElementById('musicPlayerSticker');
+            const createHearts = (event) => {
+                const body = document.body;
+                const clickX = event.clientX;
+                const clickY = event.clientY;
+
+                // 1. Create and animate the heat overlay
+                const heatOverlay = document.createElement('div');
+                heatOverlay.classList.add('heat-overlay');
+                body.appendChild(heatOverlay);
+                setTimeout(() => heatOverlay.remove(), 2500);
+
+                // --- Mobile-Responsive Adjustments ---
+                const isMobile = window.innerWidth < 600;
+                const heartCount = isMobile ? 20 : 40;
+                const xSpread = isMobile ? 200 : 400;
+                const ySpread = isMobile ? 250 : 350;
+
+                // 2. Create and animate the heart particles
+                for (let i = 0; i < heartCount; i++) { 
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart-particle');
+                    heart.innerHTML = '❤️';
+                    body.appendChild(heart);
+
+                    const size = Math.random() * 20 + 10;
+                    const xEnd = (Math.random() - 0.5) * xSpread; // Use adjusted spread
+                    const yEnd = (Math.random() * -ySpread) - 100; // Use adjusted spread
+                    const duration = Math.random() * 2 + 2.5; 
+                    const delay = Math.random() * 0.2; 
+                    const rStart = Math.random() * 360;
+                    const rEnd = (Math.random() - 0.5) * 720;
+
+                    heart.style.fontSize = `${size}px`;
+                    heart.style.left = `${clickX - size / 2}px`;
+                    heart.style.top = `${clickY - size / 2}px`;
+
+                    heart.style.setProperty('--x-end', `${xEnd}px`);
+                    heart.style.setProperty('--y-end', `${yEnd}px`);
+                    heart.style.setProperty('--duration', `${duration}s`);
+                    heart.style.setProperty('--delay', `${delay}s`);
+                    heart.style.setProperty('--r-start', `${rStart}deg`);
+                    heart.style.setProperty('--r-end', `${rEnd}deg`);
+
+                    setTimeout(() => {
+                        heart.remove();
+                    }, duration * 1000 + delay * 1000);
+                }
+            };
+            musicPlayerSticker.addEventListener('click', createHearts);
+
 
             // --- Draggable Paper Script (Fully Responsive & Efficient) ---
             const part2 = document.querySelector('#part2');
@@ -717,6 +818,4 @@
 </body>
 
 </html>
-
-
 
