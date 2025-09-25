@@ -44,19 +44,14 @@
         body {
             background-color: #fde2e4;
             font-family: 'Short Stack', cursive;
-            /* Added padding to prevent content from hiding under the fixed header */
-            padding-top: 80px; 
         }
 
         /* --- Decorative Header --- */
         .decorative-header {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
             z-index: 999;
             text-align: center;
-            pointer-events: none; /* Allows clicking through it */
+            pointer-events: auto; /* Allows clicking through it */
             
             /* Glassmorphism Effect */
             padding-top: 10px;
@@ -87,10 +82,6 @@
 
 
         @media (max-width: 600px) {
-            body {
-                /* Adjusted padding for smaller header on mobile */
-                padding-top: 65px;
-            }
             .header-title-deco {
                 font-size: 1.5rem;
             }
@@ -108,6 +99,12 @@
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-container {
+            flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -175,6 +172,13 @@
             position: absolute; 
             width: 250px; 
             cursor: grab;
+            /* Added transitions for a smoother drag-and-drop visual effect */
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+        /* New class to provide visual feedback when an item is being dragged */
+        #part2 .paper.dragging {
+            box-shadow: 5px 25px 35px 0px rgba(0, 0, 0, 0.4);
+            cursor: grabbing;
         }
         #part2 .paper.heart { 
             width: 200px; 
@@ -305,8 +309,109 @@
             }
         }
 
-        /* --- Part 4: Music Player Styles --- */
+        /* --- Part 4: Flipping Quote Cards --- */
         #part4 {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background-color: var(--bg-color);
+        }
+
+        #part4 h2 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .quote-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .quote-card {
+            background-color: transparent;
+            width: 280px;
+            height: 280px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .quote-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            box-shadow: 0 15px 30px var(--shadow);
+            border-radius: 25px;
+        }
+
+        .quote-card.is-flipped .quote-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .quote-card-front, .quote-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quote-card-front {
+            background-color: white;
+            color: var(--text-dark);
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+        }
+
+        .quote-card-back {
+            background-color: var(--pink);
+            transform: rotateY(180deg);
+        }
+
+        .quote-card-back img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        @media (max-width: 960px) {
+            .quote-card {
+                width: 250px;
+                height: 250px;
+            }
+             #part4 h2 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .quote-card {
+                width: 80vw;
+                max-width: 320px;
+                height: 220px;
+            }
+            .quote-card-front {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* --- Part 5: Music Player Styles --- */
+        #part5 {
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -315,7 +420,7 @@
             background-color: var(--bg-color);
         }
         
-        .part4-container {
+        .part5-container {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -382,6 +487,43 @@
         }
         .song-title { font-family: 'Pacifico', cursive; font-size: 28px; color: var(--text-dark); margin-bottom: 5px; }
         .song-artist { font-size: 16px; color: var(--text-light); margin-bottom: 20px; font-family: 'Nunito', sans-serif; }
+        
+        /* -- NEW: Visualizer Styles -- */
+        .visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Align bars to the bottom */
+            height: 40px;
+            gap: 6px;
+            margin: 0 auto 20px;
+        }
+
+        .visualizer .bar {
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(var(--pink), var(--dark-pink));
+            border-radius: 3px;
+            animation: dance 1.5s infinite ease-in-out alternate;
+            animation-play-state: paused; /* Animation is stopped by default */
+            transform-origin: bottom;
+        }
+        
+        /* This class will be toggled on the music player to start the animation */
+        .music-player.playing .visualizer .bar {
+            animation-play-state: running;
+        }
+
+        /* Staggered animation for a more dynamic look */
+        .visualizer .bar:nth-child(2) { animation-duration: 1.2s; }
+        .visualizer .bar:nth-child(3) { animation-duration: 1.8s; }
+        .visualizer .bar:nth-child(4) { animation-duration: 1.4s; }
+        .visualizer .bar:nth-child(5) { animation-duration: 1.6s; }
+        
+        @keyframes dance {
+            from { transform: scaleY(0.1); }
+            to { transform: scaleY(1.0); }
+        }
+        
         .progress-container { width: 100%; height: 8px; background-color: #f0f0f0; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--pink), var(--dark-pink)); border-radius: 5px; }
         .timestamps { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-bottom: 20px; font-family: 'Nunito', sans-serif;}
@@ -443,7 +585,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 105, 180, 0.25) 0%, rgba(255, 182, 193, 0) 70%);
             opacity: 0;
             pointer-events: none;
             z-index: 10000;
@@ -546,13 +687,6 @@
 </head>
 
 <body>
-    <!-- --- Decorative Header --- -->
-    <div class="decorative-header">
-        <div class="header-title-deco">For My Sweetu</div>
-        <div class="lace-border"></div>
-    </div>
-
-
     <!-- --- Global Elements --- -->
     <div class="loader-wrapper">
         <div class="loader-content">
@@ -563,21 +697,27 @@
 
     <!-- --- Section 1: Love Letter --- -->
     <section id="part1">
-        <div class="box">
-            <div class="mail">
-                <div class="heart">
-                    <img alt="heart"><img alt="heart"><img alt="heart"><img alt="heart"><img alt="heart">
-                </div>
-                <div class="content">
-                    <div class="title"><h2>To You!</h2></div>
-                    <p>
-                        You may not realize it, but you live in every heartbeat of mine.
-                        When you smile, it feels like the whole world is filled with light...
-                        My love is like unspoken words, incomplete without you. This friendship is beautiful, but my
-                        heart whispers every moment I wish I could make you feel the depth of my love!❤️
-                    </p>
-                    <div class="gifs_left"><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXE5Mzg5N2NhbjR5enZvZDh3cG9yNjdibndkNjZhd3h1ZGkxODdmciZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/TfpG3LE90tHCUBUend/giphy.gif" alt="animated heart"></div>
-                    <div class="gifs_right"><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXE5Mzg5N2NhbjR5enZvZDh3cG9yNjdibndkNjZhd3h1ZGkxODdmciZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/nbrfPJD3kNmdkWkMo9/giphy.gif" alt="animated heart"></div>
+        <div class="decorative-header">
+            <div class="header-title-deco">For My Sweetu</div>
+            <div class="lace-border"></div>
+        </div>
+        <div class="message-container">
+            <div class="box">
+                <div class="mail">
+                    <div class="heart">
+                        <img alt="heart"><img alt="heart"><img alt="heart"><img alt="heart"><img alt="heart">
+                    </div>
+                    <div class="content">
+                        <div class="title"><h2>To You!</h2></div>
+                        <p>
+                            You may not realize it, but you live in every heartbeat of mine.
+                            When you smile, it feels like the whole world is filled with light...
+                            My love is like unspoken words, incomplete without you. This friendship is beautiful, but my
+                            heart whispers every moment I wish I could make you feel the depth of my love!❤️
+                        </p>
+                        <div class="gifs_left"><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXE5Mzg5N2NhbjR5enZvZDh3cG9yNjdibndkNjZhd3h1ZGkxODdmciZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/TfpG3LE90tHCUBUend/giphy.gif" alt="animated heart"></div>
+                        <div class="gifs_right"><img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXE5Mzg5N2NhbjR5enZvZDh3cG9yNjdibndkNjZhd3h1ZGkxODdmciZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/nbrfPJD3kNmdkWkMo9/giphy.gif" alt="animated heart"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -620,9 +760,40 @@
         </div>
     </section>
 
-    <!-- --- Section 4: Music Player --- -->
+    <!-- --- Section 4: Flipping Quote Cards --- -->
     <section id="part4">
-        <div class="part4-container">
+        <h2>Words from the Heart</h2>
+        <div class="quote-card-container">
+            <div class="quote-card">
+                <div class="quote-card-inner">
+                    <div class="quote-card-front">"You are my sun, my moon, and all my stars."</div>
+                    <div class="quote-card-back">
+                        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXM0ZDVpdnZtN2F3dGM2bDNrY2FqZmYyc2htZ28wY2Uwc2U3YzdhbiZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/LpDmM2A05awz6/giphy.gif" alt="Cute Sticker">
+                    </div>
+                </div>
+            </div>
+            <div class="quote-card">
+                <div class="quote-card-inner">
+                    <div class="quote-card-front">"If I know what love is, it is because of you."</div>
+                    <div class="quote-card-back">
+                         <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXM0ZDVpdnZtN2F3dGM2bDNrY2FqZmYyc2htZ28wY2Uwc2U3YzdhbiZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/10hO3rDNqqg2ZO/giphy.gif" alt="Cute Sticker">
+                    </div>
+                </div>
+            </div>
+            <div class="quote-card">
+                <div class="quote-card-inner">
+                    <div class="quote-card-front">"Your love is all I need to feel complete."</div>
+                    <div class="quote-card-back">
+                        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXM0ZDVpdnZtN2F3dGM2bDNrY2FqZmYyc2htZ28wY2Uwc2U3YzdhbiZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/MDJ9pKn6WALEs/giphy.gif" alt="Cute Sticker">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- --- Section 5: Music Player --- -->
+    <section id="part5">
+        <div class="part5-container">
             <div class="music-player-image">
                 <img id="musicPlayerSticker" src="https://media2.giphy.com/media/v1.Y2lkPTZjMDliOTUycXRjMnl2cDJvMWdmZ293Z2xyaXl1dnFqeDNyNWdobTJrdnVhYml4aSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/n2VnfwWUszgwjNyyRa/giphy.gif" alt="Cute animated illustration">
                 <p class="sticker-caption">Tap to create love</p>
@@ -633,6 +804,14 @@
                 </div>
                 <h2 class="song-title" id="songTitle">Choose a Song</h2>
                 <p class="song-artist" id="songArtist">And press play!</p>
+                <!-- NEW: Music visualizer added here -->
+                <div class="visualizer">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
                 <div class="progress-container" id="progressContainer">
                     <div class="progress-bar" id="progressBar"></div>
                 </div>
@@ -755,21 +934,47 @@
             let activePaper = null;
             let isDragging = false;
             let offsetX, offsetY;
+            let parentRect; // Moved here to be calculated only once on drag start for efficiency
 
             const startDrag = (e) => {
+                // Find the paper element that was clicked or touched
                 const targetPaper = e.target.closest('.paper');
                 if (!targetPaper) return;
+
+                // For touch events, immediately prevent default browser actions like scrolling
+                if (e.type === 'touchstart') {
+                    e.preventDefault();
+                }
+
                 activePaper = targetPaper;
                 isDragging = true;
+                
+                // Disable page scrolling while an element is being dragged
                 document.body.style.overflow = 'hidden';
+                
+                // Bring the active paper to the top
                 activePaper.style.zIndex = highestZ++;
-                activePaper.style.cursor = 'grabbing';
+                activePaper.classList.add('dragging'); // Add class for shadow and cursor feedback
+                
+                // Add a "lift" effect by managing the scale transform in JS
+                const currentTransform = activePaper.style.transform;
+                const rotation = currentTransform.match(/rotate\([^)]+\)/)?.[0] || '';
+                activePaper.style.transform = `${rotation} scale(1.05)`;
+
+                // Calculate the parent container's bounds ONCE for performance
+                parentRect = part2.getBoundingClientRect();
+
+                // Determine the starting coordinates of the mouse/touch
                 const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
                 const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                
                 const rect = activePaper.getBoundingClientRect();
-                const parentRect = part2.getBoundingClientRect();
+
+                // Calculate the offset from the cursor to the top-left of the element
                 offsetX = clientX - (rect.left - parentRect.left);
                 offsetY = clientY - (rect.top - parentRect.top);
+
+                // Listen for move and end events on the entire document
                 document.addEventListener('mousemove', drag);
                 document.addEventListener('touchmove', drag, { passive: false });
                 document.addEventListener('mouseup', endDrag);
@@ -778,30 +983,57 @@
 
             const drag = (e) => {
                 if (!isDragging || !activePaper) return;
+
+                // This is crucial to prevent scrolling on touch devices during the drag
                 e.preventDefault();
+
                 const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
                 const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-                const parentRect = part2.getBoundingClientRect();
+                
+                // Calculate the new position based on the pre-calculated parent bounds and offset
                 let newX = clientX - parentRect.left - offsetX;
                 let newY = clientY - parentRect.top - offsetY;
+
+                // Update the element's position
                 activePaper.style.left = `${newX}px`;
                 activePaper.style.top = `${newY}px`;
             };
 
             const endDrag = () => {
                 if (!isDragging || !activePaper) return;
+
+                // Re-enable page scrolling
                 document.body.style.overflow = '';
+                
                 isDragging = false;
-                activePaper.style.cursor = 'grab';
+                activePaper.classList.remove('dragging');
+                
+                // Remove the "lift" scale effect, but preserve the rotation
+                const currentTransform = activePaper.style.transform;
+                const rotation = currentTransform.match(/rotate\([^)]+\)/)?.[0] || '';
+                activePaper.style.transform = rotation;
+
                 activePaper = null;
+
+                // Clean up global event listeners
                 document.removeEventListener('mousemove', drag);
                 document.removeEventListener('touchmove', drag);
                 document.removeEventListener('mouseup', endDrag);
                 document.removeEventListener('touchend', endDrag);
             };
             
+            // Initiate drag on both mouse down and touch start
             part2.addEventListener('mousedown', startDrag);
             part2.addEventListener('touchstart', startDrag, { passive: false });
+
+
+            // --- Flipping Quote Cards Script ---
+            const quoteCards = document.querySelectorAll('.quote-card');
+            quoteCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('is-flipped');
+                });
+            });
 
 
             // --- Music Player Script ---
@@ -817,11 +1049,12 @@
             const progressContainer = document.getElementById('progressContainer');
             const currentTimeEl = document.getElementById('currentTime');
             const totalDurationEl = document.getElementById('totalDuration');
+            const musicPlayer = document.querySelector('.music-player'); // Get the music player element
 
             const songs = [
-                { title: 'Sparkle', artist: 'Acoustic Sun', src: 'music/sparkle.mp3', cover: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRxdXF3YW5qaGpmMGNpcjhhdXB1dGVranVvdTVhYm81cDBiY3k0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MBTTvOv8148AzCtslz/giphy.gif', bgClass: 'album-art-bg-1' },
-                { title: 'Dreamy Night', artist: 'Luna Beat', src: 'music/dreamy-night.mp3', cover: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRxdXF3YW5qaGpmMGNpcjhhdXB1dGVranVvdTVhYm81cDBiY3k0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MBTTvOv8148AzCtslz/giphy.gif', bgClass: 'album-art-bg-2' },
-                { title: 'Cotton Candy', artist: 'Sweet Vibes', src: 'music/cotton-candy.mp3', cover: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRxdXF3YW5qaGpmMGNpcjhhdXB1dGVranVvdTVhYm81cDBiY3k0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MBTTvOv8148AzCtslz/giphy.gif', bgClass: 'album-art-bg-3' }
+                { title: 'A Song For You', artist: 'From Me', src: './11.mp3', cover: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRxdXF3YW5qaGpmMGNpcjhhdXB1dGVranVvdTVhYm81cDBiY3k0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MBTTvOv8148AzCtslz/giphy.gif', bgClass: 'album-art-bg-1' },
+                { title: 'A Song For You', artist: 'From Me', src: './33.mp3', cover: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRxdXF3YW5qaGpmMGNpcjhhdXB1dGVranVvdTVhYm81cDBiY3k0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MBTTvOv8148AzCtslz/giphy.gif', bgClass: 'album-art-bg-2' },
+                { title: 'A Song For You', artist: 'From Me', src: './22.mp3', cover: 'https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRxdXF3YW5qaGpmMGNpcjhhdXB1dGVranVvdTVhYm81cDBiY3k0byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MBTTvOv8148AzCtslz/giphy.gif', bgClass: 'album-art-bg-3' }
             ];
             let currentSongIndex = 0;
             let isPlaying = false;
@@ -830,17 +1063,25 @@
                 songTitle.textContent = song.title;
                 songArtist.textContent = song.artist;
                 audio.src = song.src;
-                audio.onerror = () => {
-                   console.warn(`Could not load audio: ${song.src}. Please add your music files.`);
-                   audio.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
-                };
                 albumArtImg.src = song.cover;
                 albumArtContainer.className = 'album-art'; // Reset classes
                 albumArtContainer.classList.add(song.bgClass); // Add new class
             }
 
-            function playSong() { isPlaying = true; playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>'; audio.play(); }
-            function pauseSong() { isPlaying = false; playPauseBtn.innerHTML = '<i class="fas fa-play"></i>'; audio.pause(); }
+            function playSong() {
+                isPlaying = true;
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                musicPlayer.classList.add('playing');
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.error("Audio playback failed:", error);
+                        // Revert the UI to a paused state if playback fails
+                        pauseSong();
+                    });
+                }
+            }
+            function pauseSong() { isPlaying = false; playPauseBtn.innerHTML = '<i class="fas fa-play"></i>'; audio.pause(); musicPlayer.classList.remove('playing'); }
             function prevSong() { currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length; loadSong(songs[currentSongIndex]); if (isPlaying) playSong(); }
             function nextSong() { currentSongIndex = (currentSongIndex + 1) % songs.length; loadSong(songs[currentSongIndex]); if (isPlaying) playSong(); }
 
@@ -922,4 +1163,5 @@
 </body>
 
 </html>
+
 
