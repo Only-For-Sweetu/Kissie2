@@ -338,22 +338,50 @@
         }
 
         /* --- Loader Styles --- */
-        .loader-wrapper { position: fixed; width: 100%; height: 100%; background: #fff; top: 0; left: 0; z-index: 10000; }
-        .loader { position: absolute; top: 50%; left: 50%; width: 200px; height: 200px; border-radius: 50%; perspective: 800px; display: flex; justify-content: center; align-items: center; transform: translate(-50%, -50%); }
-        .box-heart { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; animation: loaderElectron 0.5s alternate infinite; z-index: -1; }
-        .heartLoader { content: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'); width: 120px; height: 120px; filter: drop-shadow(0 0 10px red) drop-shadow(0 0 40px red) drop-shadow(0 0 60px red); }
-        @keyframes loaderElectron { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
-        .inner { position: absolute; box-sizing: border-box; width: 100%; height: 100%; border-radius: 50%; }
-        .inner.one { left: 0%; top: 0%; animation: rotate-one 1s linear infinite; border-bottom: 4px solid red; border-right: 4px solid red; filter: drop-shadow(0 0 5px red); }
-        .inner.two { right: 0%; top: 0%; animation: rotate-two 1s linear infinite; border-right: 4px solid red; border-top: 4px solid red; filter: drop-shadow(0 0 5px red); }
-        .inner.three { right: 0%; bottom: 0%; animation: rotate-three 1s linear infinite; border-top: 4px solid red; border-left: 4px solid red; filter: drop-shadow(0 0 10px red); }
-        .inner::before { position: absolute; content: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'); width: 30px; height: 30px; }
-        .inner.one::before { top: 40%; transform: translate(-50%, 30%); }
-        .inner.two::before { right: 50%; bottom: 0; transform: translate(30%, 50%); }
-        .inner.three::before { right: 2px; top: 50%; transform: translate(50%, -120%); }
-        @keyframes rotate-one { 0% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg); } 100% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg); } }
-        @keyframes rotate-two { 0% { transform: rotateX(50deg) rotateY(10deg) rotateZ(0deg); } 100% { transform: rotateX(50deg) rotateY(10deg) rotateZ(360deg); } }
-        @keyframes rotate-three { 0% { transform: rotateX(35deg) rotateY(55deg) rotateZ(0deg); } 100% { transform: rotateX(35deg) rotateY(55deg) rotateZ(360deg); } }
+        .loader-wrapper {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            top: 0;
+            left: 0;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hide the off-screen content */
+        }
+        
+        /* This is the moving part */
+        .loader-content {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            /* Animation that loops from right to left - now faster */
+            animation: run-across 2.5s linear infinite; 
+        }
+
+        @keyframes run-across {
+            0% {
+                transform: translateX(60vw); /* Start from off-screen right */
+            }
+            100% {
+                transform: translateX(-60vw); /* End at off-screen left */
+            }
+        }
+
+        .loader-gif {
+            width: 150px;
+            height: auto;
+        }
+
+        .loader-text {
+            margin-left: 1rem;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            font-family: 'Dancing Script', cursive;
+            white-space: nowrap;
+        }
 
         /* --- Footer Styles --- */
         #copy { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 1rem; z-index: 100; }
@@ -365,11 +393,9 @@
 <body>
     <!-- --- Global Elements --- -->
     <div class="loader-wrapper">
-        <div class="loader">
-            <div class="inner one"></div>
-            <div class="inner two"></div>
-            <div class="inner three"></div>
-            <div class="box-heart"><div class="heartLoader"></div></div>
+        <div class="loader-content">
+             <img class="loader-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzVleWx2dTg5YmpvY29xdHl2bGdhMDEzaG5vNGJlYzBhamhwYXVmdSZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/VIiPveBKmF99T7pZwM/giphy.gif" alt="Loading...">
+            <p class="loader-text">Wait my love is loading...</p>
         </div>
     </div>
 
@@ -469,12 +495,13 @@
     <!-- --- Scripts --- -->
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script>
-        // --- Page Loader Script ---
-        $(window).on('load', function (event) {
-            $('.loader-wrapper').delay(2000).fadeOut('slow');
-        });
-
         document.addEventListener('DOMContentLoaded', () => {
+            // --- Page Loader Script ---
+            // Hiding the loader after a 7-second delay to ensure it's visible.
+            setTimeout(() => {
+                $('.loader-wrapper').fadeOut('slow');
+            }, 7000);
+
             // --- Draggable Paper Script (Fully Responsive & Efficient) ---
             const part2 = document.querySelector('#part2');
             const papers = document.querySelectorAll('#part2 .paper');
@@ -690,6 +717,14 @@
 </body>
 
 </html>
+
+
+
+
+
+
+
+
 
 
 
